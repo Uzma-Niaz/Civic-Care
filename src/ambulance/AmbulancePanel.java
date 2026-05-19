@@ -163,12 +163,17 @@ public class AmbulancePanel extends JPanel {
         doubleInputRow.setMaximumSize(new Dimension(Integer.MAX_VALUE, 90));
         doubleInputRow.setPreferredSize(new Dimension(0, 90));
 
-        String[] mockNodes = {"Saddar", "Gulshan", "Johar", "Clifton", "DHA", "Malir", "Nazimabad"};
-        
-        startLocationCombo = new JComboBox<>(mockNodes);
+      
+        String[] graphNodes = graph.getAllLocations();
+
+        startLocationCombo = new JComboBox<>(graphNodes);
         customizeCombo(startLocationCombo);
-        endLocationCombo = new JComboBox<>(mockNodes);
-        if (mockNodes.length > 1) endLocationCombo.setSelectedIndex(1);
+
+        endLocationCombo = new JComboBox<>(graphNodes);
+
+        if (graphNodes.length > 1)
+            endLocationCombo.setSelectedIndex(1);
+
         customizeCombo(endLocationCombo);
 
         doubleInputRow.add(createCardInputComponent("Patient Pickup Location", startLocationCombo, 1));
@@ -492,37 +497,47 @@ public class AmbulancePanel extends JPanel {
     }
 
     private void processDijkstraRouteCalculation() {
-        String originNodeStr = (String) startLocationCombo.getSelectedItem();
-        String targetDestinationStr = (String) endLocationCombo.getSelectedItem();
+        String origin = (String) startLocationCombo.getSelectedItem();
+        String target = (String) endLocationCombo.getSelectedItem();
 
-        if (originNodeStr.equals(targetDestinationStr)) {
-            JOptionPane.showMessageDialog(this, "Pickup location matches destination target!", "Routing Alert", JOptionPane.WARNING_MESSAGE);
+        String[] path = Dijkstra.findShortestPath(this.graph, origin, target);
+
+        if (path == null) {
+            JOptionPane.showMessageDialog(this, "No route found!");
             return;
         }
 
-        metricTimeLabel.setText("12 mins");
-        metricDistLabel.setText("6.8 km");
+        // UI Updates (Labels etc.)
+     // UI Updates (Labels etc.)
+        int dist = Integer.parseInt(path[path.length - 1]);
+        int hops = path.length - 2;
+        int estTime = dist * 2; // Assuming 1km = 2 minutes
+
+        // Main dashboard labels
+        metricDistLabel.setText(dist + " km");
+        metricTimeLabel.setText(estTime + " mins"); // Time update ho gaya
         
-        timeValueLabel.setText("12 mins");
-        distValueLabel.setText("6.8 km");
-        hopsValueLabel.setText("3 Nodes");
+        // Log section labels
+        distValueLabel.setText(dist + " km");
+        timeValueLabel.setText(estTime + " mins");
+        hopsValueLabel.setText(hops + " Nodes");
 
-        StringBuilder descriptionStringBuilder = new StringBuilder();
-        descriptionStringBuilder.append("Fastest path resolved successfully via Dijkstra's Matrix Engine:\n\n");
-        descriptionStringBuilder.append("ROUTE PATHWAY:\n");
-        descriptionStringBuilder.append(" [Origin] ").append(originNodeStr).append(" -> Central Junction Node -> ").append(targetDestinationStr).append(" [Hospital]\n\n");
-        descriptionStringBuilder.append("Ambulance unit dispatched. Navigation updates active.");
+        routeDetailsArea.setText("Path: " + String.join(" -> ", path));
+        // --- MAP TOPOLOGY FIX ---
+        List<Point> navPoints = new ArrayList<>();
+        int canvasWidth = routeMapCanvas.getWidth();
+        int canvasHeight = routeMapCanvas.getHeight();
 
-        routeDetailsArea.setText(descriptionStringBuilder.toString());
-        routeDetailsArea.setForeground(NAVY_DARK);
+        // Path ke har location ke liye grid-based automatic points
+        for (int i = 0; i < path.length - 1; i++) {
+            // Screen par points distribute karne ka logic
+            int x = 50 + (i * (canvasWidth / Math.max(1, path.length)));
+            int y = (i % 2 == 0) ? canvasHeight / 3 : (canvasHeight / 3) * 2;
+            navPoints.add(new Point(x, y));
+        }
 
-        List<Point> navigationRouteSequencePoints = new ArrayList<>();
-        navigationRouteSequencePoints.add(new Point(60, 170));
-        navigationRouteSequencePoints.add(new Point(160, 120));
-        navigationRouteSequencePoints.add(new Point(280, 140));
-        navigationRouteSequencePoints.add(new Point(390, 80));
-        
-        routeMapCanvas.renderActivePathOverlays(navigationRouteSequencePoints);
+        // Canvas ko refresh kar dein
+        routeMapCanvas.renderActivePathOverlays(navPoints);
     }
 
     private class MapCanvas extends JPanel {
@@ -555,36 +570,22 @@ public class AmbulancePanel extends JPanel {
             g2d.drawLine(240, 10, 240, 210);
             g2d.drawLine(380, 30, 380, 230);
 
+         // Update: Dynamic Path Drawing Logic
             if (dynamicPathOverlayCollection != null && dynamicPathOverlayCollection.size() > 1) {
-                g2d.setStroke(new BasicStroke(3.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[]{6.0f}, 0.0f));
-                g2d.setColor(ACCENT_RED_SOLID);
-                for (int i = 0; i < dynamicPathOverlayCollection.size() - 1; i++) {
-                    Point currentHopNode = dynamicPathOverlayCollection.get(i);
-                    Point nextHopNode = dynamicPathOverlayCollection.get(i + 1);
-                    g2d.drawLine(currentHopNode.x, currentHopNode.y, nextHopNode.x, nextHopNode.y);
-                }
-            }
-
-            if (dynamicPathOverlayCollection != null && dynamicPathOverlayCollection.size() > 1) {
-                Point startPointNode = dynamicPathOverlayCollection.get(0);
-                Point endPointNode = dynamicPathOverlayCollection.get(dynamicPathOverlayCollection.size() - 1);
+                g2d.setStroke(new BasicStroke(4.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2d.setColor(ACCENT_RED_SOLID); // Yeh wahi color hai jo aapne top par define kiya hai
                 
-                g2d.setColor(new Color(35, 175, 90));
-                g2d.fillOval(startPointNode.x - 7, startPointNode.y - 20, 14, 14);
-                g2d.fillPolygon(new int[]{startPointNode.x - 4, startPointNode.x, startPointNode.x + 4}, new int[]{startPointNode.y - 9, startPointNode.y, startPointNode.y - 9}, 3);
-                g2d.setColor(Color.WHITE);
-                g2d.fillOval(startPointNode.x - 3, startPointNode.y - 16, 6, 6);
-
-                g2d.setColor(ACCENT_RED_SOLID);
-                g2d.fillOval(endPointNode.x - 7, endPointNode.y - 20, 14, 14);
-                g2d.fillPolygon(new int[]{endPointNode.x - 4, endPointNode.x, endPointNode.x + 4}, new int[]{endPointNode.y - 9, endPointNode.y, endPointNode.y - 9}, 3);
-                g2d.setColor(Color.WHITE);
-                g2d.fillOval(endPointNode.x - 3, endPointNode.y - 16, 6, 6);
-            } else {
-                g2d.setColor(new Color(180, 195, 210));
-                g2d.fillOval(60 - 5, 170 - 5, 10, 10);
-                g2d.fillOval(390 - 5, 80 - 5, 10, 10);
-            }
-        }
-    }
-}
+                for (int i = 0; i < dynamicPathOverlayCollection.size() - 1; i++) {
+                    Point p1 = dynamicPathOverlayCollection.get(i);
+                    Point p2 = dynamicPathOverlayCollection.get(i + 1);
+                    
+                    // Line draw karein
+                    g2d.drawLine(p1.x, p1.y, p2.x, p2.y);
+                    
+                    // Node point draw karein
+                    g2d.fillOval(p1.x - 5, p1.y - 5, 10, 10);
+                }
+                // Aakhri node par circle
+                Point last = dynamicPathOverlayCollection.get(dynamicPathOverlayCollection.size() - 1);
+                g2d.fillOval(last.x - 5, last.y - 5, 10, 10);
+            }}}}

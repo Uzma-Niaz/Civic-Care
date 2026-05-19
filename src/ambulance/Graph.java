@@ -25,7 +25,7 @@ class GraphEntry {
 }
 
 class GraphHashMap {
-    private GraphEntry[] buckets = new GraphEntry[50];
+    private GraphEntry[] buckets = new GraphEntry[100];
     private String[] keyList = new String[200];
     private int keyCount = 0;
 
@@ -84,22 +84,25 @@ public class Graph {
 
     // --- YE WALA METHOD UPDATE KIYA HAI ---
     public void loadFromFiles(String nodesFile, String disastersFile) {
-        // Pehle locations load karte hain
         String[] lines = FileUtil.readLines(nodesFile);
         if (lines != null) {
             for (String line : lines) {
                 String[] p = line.trim().split(",");
-                if (p.length == 3) {
-                    addLocation(p[0].trim());
-                    addLocation(p[1].trim());
-                    addRoad(p[0].trim(), p[1].trim(), Integer.parseInt(p[2].trim()));
+                if (p.length >= 3) {
+                    String src = p[0].trim();
+                    String dest = p[1].trim();
+                    int weight = Integer.parseInt(p[2].trim());
+                    
+                    // Phele nodes add karein
+                    addLocation(src);
+                    addLocation(dest);
+                    // Phir road add karein
+                    addRoad(src, dest, weight);
                 }
             }
         }
-        
-        // Disaster file ko bhi filhal handle kar letay hain taake error na aaye
-        System.out.println("Graph loaded with locations and disasters data.");
     }
+        
     
     // Purana method bhi rakh letay hain back-up ke liye
     public void loadFromFile(String filePath) {
