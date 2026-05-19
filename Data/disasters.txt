@@ -1,0 +1,5 @@
+Karachi_Flood,9,80000,20
+Lahore_Smog,7,50000,15
+Islamabad_Earthquake,8,30000,25
+Quetta_Earthquake,9,20000,30
+Peshawar_Fire,6,10000,10

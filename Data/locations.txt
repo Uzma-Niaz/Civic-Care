@@ -1,0 +1,14 @@
+Saddar,Karachi_Central,4
+Saddar,Clifton,5
+Saddar,PECHS,6
+Karachi_Central,Gulshan,8
+Karachi_Central,Hospital_Civil,10
+Clifton,Hospital_Aga_Khan,3
+PECHS,Hospital_Aga_Khan,7
+Gulshan,Hospital_Civil,4
+Gulshan,PECHS,5
+Hospital_Civil,Hospital_Liaquat,6
+Saddar,Hospital_Liaquat,9
+PECHS,Gulistan-e-Johar,7
+Gulshan,Gulistan-e-Johar,3
+Gulistan-e-Johar,Hospital_Aga_Khan,5
