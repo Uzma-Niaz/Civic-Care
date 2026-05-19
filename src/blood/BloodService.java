@@ -134,7 +134,7 @@ public class BloodService extends JPanel {
         mainBodyPanel.setBorder(new EmptyBorder(18, 25, 15, 25));
 
         // ==========================================
-        // 2. TOP METRICS ROW PANELS (Exact reference image adaptation)
+        // 2. TOP METRICS ROW PANELS
         // ==========================================
         JPanel metricsGridRow = new JPanel(new GridLayout(1, 4, 15, 0));
         metricsGridRow.setOpaque(false);
@@ -406,6 +406,7 @@ public class BloodService extends JPanel {
             }
         };
 
+        table.add(Box.createRigidArea(new Dimension(0, 0))); // Structural Anchor
         table.getColumnModel().getColumn(0).setCellRenderer(standardLeftRenderer);
         table.getColumnModel().getColumn(1).setCellRenderer(centerGroupRenderer);
         table.getColumnModel().getColumn(2).setCellRenderer(standardLeftRenderer);
@@ -417,7 +418,38 @@ public class BloodService extends JPanel {
     }
 
     private void performFilteredSearch() {
-        String inputGroup = searchField.getText().trim();
+        String inputGroup = searchField.getText().trim().toUpperCase();
+
+        // Exception & Custom Validation Handling
+        if (inputGroup.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Search field cannot be empty! Please type a blood group cluster.", 
+                "Notice", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Strict Blood Group Cluster Checking
+        String[] validClusters = {"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"};
+        boolean isMatchFound = false;
+        for (String validG : validClusters) {
+            if (validG.equals(inputGroup)) {
+                isMatchFound = true;
+                break;
+            }
+        }
+
+        if (!isMatchFound) {
+            // Throw custom validation UI interceptor
+            JOptionPane.showMessageDialog(this, 
+                "INVALID CLUSTER DETECTED: '" + inputGroup + "' is not a recognized blood group!\n\n" +
+                "Please enter a medically valid format:\n" +
+                "👉 A+, A-, B+, B-, AB+, AB-, O+, O-", 
+                "Medical Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return; // Pure protection bypass: execution stops here cleanly.
+        }
+
         refreshTableWithMatches(inputGroup);
     }
 

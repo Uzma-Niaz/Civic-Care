@@ -294,7 +294,6 @@ public class TriagePanel extends JPanel {
         tableScroll.getViewport().setBackground(Color.WHITE);
         tableScroll.setBorder(new LineBorder(BORDER_COLOR, 1, true));
 
-        // Table ab center container ki poori space le legi bina bottom boxes ke
         centerContainer.add(tableScroll, BorderLayout.CENTER);
         mainBodyWrapper.add(centerContainer, BorderLayout.CENTER);
 
@@ -521,14 +520,14 @@ public class TriagePanel extends JPanel {
         }
 
         if (registry == null) {
-            System.out.println("ERROR: HospitalRegistry Object is null!");
-            performDirectSafeAdmission(name, loc, sev);
+            JOptionPane.showMessageDialog(this, "Critical Error: Core Registry Data Structure is unavailable.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
             RoutingResult result = registry.findBestHospital(loc, sev);
             
+            // Checking if a valid hospital and path were found
             if (result != null && result.hospital != null) {
                 Patient p = new Patient(name, sev, loc);
                 registry.admitPatient(result.hospital, p);
@@ -538,42 +537,22 @@ public class TriagePanel extends JPanel {
                 updateTable();
                 refreshDashboard(); 
                 clearFields();
+                
+                JOptionPane.showMessageDialog(this, "Patient successfully routed to " + result.hospital.getName(), "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                performDirectSafeAdmission(name, loc, sev);
+                // Agar map mein rasta nahi mila to proper popup alert trigger hoga
+                String errorMsg = (result != null && result.errorMessage != null) ? result.errorMessage : "No valid route found for this location!";
+                JOptionPane.showMessageDialog(this, errorMsg, "Routing Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
-            System.out.println("Exception caught in Dijkstra routing. Fallback triggered.");
+            System.out.println("Exception caught in Dijkstra routing.");
             ex.printStackTrace(); 
-            performDirectSafeAdmission(name, loc, sev);
+            JOptionPane.showMessageDialog(this, "Routing Exception: " + ex.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void performDirectSafeAdmission(String name, String loc, int sev) {
-        if (registry == null || registry.getAllHospitals() == null) {
-            JOptionPane.showMessageDialog(this, "Critical Error: Core Registry Data Structure is unavailable.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        Hospital fallbackHospital = null;
-        for (Hospital h : registry.getAllHospitals()) {
-            if (h != null && h.canAdmit(sev)) {
-                fallbackHospital = h;
-                break;
-            }
-        }
-
-        if (fallbackHospital != null) {
-            Patient p = new Patient(name, sev, loc);
-            fallbackHospital.admitPatient(sev);
-            p.setAssignedHospital(fallbackHospital.getName());
-            if (queue != null) queue.addPatient(p);
-            
-            updateTable();
-            refreshDashboard();
-            clearFields();
-        } else {
-            JOptionPane.showMessageDialog(this, "No hospital beds available for this configuration matrix!", "Refused Exception", JOptionPane.ERROR_MESSAGE);
-        }
+        // Kept empty to bypass the silent default assignment to Aga Khan
     }
 
     private void updateTable() {

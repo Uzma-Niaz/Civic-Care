@@ -12,3 +12,15 @@ Saddar,Hospital_Liaquat,9
 PECHS,Gulistan-e-Johar,7
 Gulshan,Gulistan-e-Johar,3
 Gulistan-e-Johar,Hospital_Aga_Khan,5
+Bahadurabad,Hospital_Aga_Khan,3
+Bahadurabad,PECHS,2
+KDA_Scheme_1,Hospital_Aga_Khan,2
+KDA_Scheme_1,Gulistan-e-Johar,4
+Garden,Hospital_Civil,3
+Garden,Saddar,3
+Jubilee,Hospital_Civil,2
+Jubilee,Saddar,2
+North_Nazimabad,Hospital_Liaquat,4
+North_Nazimabad,Karachi_Central,3
+FB_Area,Hospital_Liaquat,3
+FB_Area,Gulshan,4

@@ -1,11 +1,11 @@
-import ui.MainWindow;
+import triage.ModuleMenu;
 
 public class Main {
     public static void main(String[] args) {
         // CivicCare GUI launch karne ke liye
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow();
+                new ModuleMenu().setVisible(true);
             }
         });
     }

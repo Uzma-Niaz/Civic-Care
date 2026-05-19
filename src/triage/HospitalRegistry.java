@@ -34,6 +34,9 @@ public class HospitalRegistry {
         Hospital bestHospital = null;
         String[] bestPath = null;
         int minDistance = Integer.MAX_VALUE;
+        
+        // SAFETY SWITCH: Isse track hoga ke koi asli rasta mila bhi hai ya nahi
+        boolean pathFoundAtLeastOnce = false;
 
         for (int i = 0; i < hospitalCount; i++) {
             Hospital h = hospitals[i];
@@ -44,6 +47,7 @@ public class HospitalRegistry {
                 String hospitalLoc = h.getLocation().trim();
                 String[] result = Dijkstra.findShortestPath(graph, cleanPatientLoc, hospitalLoc);
 
+                // Sirf tabhi rasta select hoga jab Dijkstra valid array return karega
                 if (result != null && result.length > 0) {
                     try {
                         int dist = Integer.parseInt(result[result.length - 1]);
@@ -51,6 +55,7 @@ public class HospitalRegistry {
                             minDistance = dist;
                             bestHospital = h;
                             bestPath = result;
+                            pathFoundAtLeastOnce = true; // Sahi rasta mil gaya!
                         }
                     } catch (Exception e) {
                         // Skip if distance parsing fails
@@ -59,11 +64,13 @@ public class HospitalRegistry {
             }
         }
 
-        if (bestHospital != null) {
+        // Agar loop chalne ke baad waqai koi kareebi hospital ka rasta mila ho
+        if (pathFoundAtLeastOnce && bestHospital != null) {
             return new RoutingResult(bestHospital, bestPath, minDistance, null);
         }
 
-        return new RoutingResult(null, null, -1, "RED ALERT: No hospitals available for this severity!");
+        // Agar kuch galat likha aur rasta nahi mila, to automatic Aga Khan dene ke bajaye ye alert jayega
+        return new RoutingResult(null, null, -1, "LOCATION ERROR: '" + cleanPatientLoc + "' is not found in our map or no route available!");
     }
 
     public boolean admitPatient(Hospital hospital, Patient patient) {
@@ -86,22 +93,8 @@ public class HospitalRegistry {
 
     private void loadFromFile() {
         hospitalCount = 0;
-        if (!FileUtil.fileExists(FILE_PATH)) {
-            loadDefaultHospitals();
-            return;
-        }
-        String[] lines = FileUtil.readLines(FILE_PATH);
-        if (lines == null || lines.length == 0) {
-            loadDefaultHospitals();
-            return;
-        }
-        for (String line : lines) {
-            if (line.trim().isEmpty()) continue;
-            Hospital h = Hospital.fromFileString(line);
-            if (h != null && hospitalCount < MAX) {
-                hospitals[hospitalCount++] = h;
-            }
-        }
+        // Hamesha defaults full beds ke sath load honge taake testing se beds kam na hon
+        loadDefaultHospitals(); 
     }
 
     private void saveToFile() {
@@ -115,11 +108,12 @@ public class HospitalRegistry {
 
     private void loadDefaultHospitals() {
         hospitalCount = 0;
-        // Make sure names match your Graph nodes exactly!
+        
+        // CRITICAL FIX: Naamon aur locations ko graph nodes (Hospital_Civil, etc.) se exact match kar diya hai
         Hospital[] defaults = {
-            new Hospital("Aga Khan Hospital", "Saddar", 20, 30, 50),
-            new Hospital("Civil Hospital", "Cantt", 15, 25, 40),
-            new Hospital("Liaquat Hospital", "Gulshan", 10, 20, 30)
+            new Hospital("Aga Khan Hospital", "Hospital_Aga_Khan", 20, 30, 50),
+            new Hospital("Civil Hospital", "Hospital_Civil", 15, 25, 40),
+            new Hospital("Liaquat Hospital", "Hospital_Liaquat", 10, 20, 30)
         };
         for (Hospital h : defaults) {
             if (hospitalCount < MAX) hospitals[hospitalCount++] = h;
