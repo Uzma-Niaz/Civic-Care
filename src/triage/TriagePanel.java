@@ -17,6 +17,8 @@ public class TriagePanel extends JPanel {
     private JTable patientTable;
     private DefaultTableModel tableModel;
     private JPanel dashboardPanel;
+    private JPanel centerContainer; 
+   
     
     private Runnable onBackAction;
 
@@ -249,7 +251,7 @@ public class TriagePanel extends JPanel {
         // ==========================================
         // 3. CENTER CONTAINER (Active Admissions Log Only)
         // ==========================================
-        JPanel centerContainer = new JPanel(new BorderLayout(0, 15));
+        centerContainer = new JPanel(new BorderLayout(0, 15)); // Sirf variable name use karein
         centerContainer.setOpaque(false);
 
         String[] cols = {"Patient Name", "Urgency Tier", "Assigned Facility"};
@@ -515,42 +517,31 @@ public class TriagePanel extends JPanel {
         int sev = severityCombo.getSelectedIndex() + 1;
 
         if(name.isEmpty() || loc.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields first!", "Notice", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (registry == null) {
-            JOptionPane.showMessageDialog(this, "Critical Error: Core Registry Data Structure is unavailable.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Please fill all fields first!");
             return;
         }
 
         try {
             RoutingResult result = registry.findBestHospital(loc, sev);
-            
-            // Checking if a valid hospital and path were found
+           
+            // ----------------------------------
+
             if (result != null && result.hospital != null) {
                 Patient p = new Patient(name, sev, loc);
                 registry.admitPatient(result.hospital, p);
-                p.setAssignedHospital(result.hospital.getName()); 
+                p.setAssignedHospital(result.hospital.getName());
                 if (queue != null) queue.addPatient(p);
                 
                 updateTable();
-                refreshDashboard(); 
+                refreshDashboard();
                 clearFields();
-                
-                JOptionPane.showMessageDialog(this, "Patient successfully routed to " + result.hospital.getName(), "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                // Agar map mein rasta nahi mila to proper popup alert trigger hoga
-                String errorMsg = (result != null && result.errorMessage != null) ? result.errorMessage : "No valid route found for this location!";
-                JOptionPane.showMessageDialog(this, errorMsg, "Routing Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "No hospital found or capacity full!");
             }
         } catch (Exception ex) {
-            System.out.println("Exception caught in Dijkstra routing.");
-            ex.printStackTrace(); 
-            JOptionPane.showMessageDialog(this, "Routing Exception: " + ex.getMessage(), "Exception", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
-
     private void performDirectSafeAdmission(String name, String loc, int sev) {
         // Kept empty to bypass the silent default assignment to Aga Khan
     }

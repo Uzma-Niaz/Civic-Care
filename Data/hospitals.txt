@@ -1,3 +1,10 @@
-Aga Khan Hospital,Hospital_Aga_Khan,20,30,50,0,0,0
-Civil Hospital,Hospital_Civil,15,25,40,0,0,0
-Liaquat Hospital,Hospital_Liaquat,10,20,30,0,0,0
+Aga Khan Hospital,Hospital_Aga_Khan,20,30,50,24.89,67.06
+Civil Hospital,Hospital_Civil,15,25,40,24.85,67.02
+Liaquat Hospital,Hospital_Liaquat,10,20,30,24.88,67.07
+Jinnah Hospital,Hospital_Jinnah,12,22,45,24.85,67.04
+Ziauddin Hospital,Hospital_Ziauddin,8,15,35,24.87,67.08
+Patel Hospital,Hospital_Patel,10,20,40,24.84,67.01
+Omi Hospital,Hospital_Omi,5,10,20,24.86,67.05
+South City Hospital,Hospital_South,8,18,30,24.83,67.03
+Indus Hospital,Hospital_Indus,20,35,60,24.82,67.09
+Tabba Heart Institute,Hospital_Tabba,15,20,50,24.86,67.04

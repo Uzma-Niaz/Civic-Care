@@ -1,26 +1,36 @@
-Saddar,Karachi_Central,4
-Saddar,Clifton,5
-Saddar,PECHS,6
-Karachi_Central,Gulshan,8
-Karachi_Central,Hospital_Civil,10
-Clifton,Hospital_Aga_Khan,3
-PECHS,Hospital_Aga_Khan,7
-Gulshan,Hospital_Civil,4
-Gulshan,PECHS,5
-Hospital_Civil,Hospital_Liaquat,6
-Saddar,Hospital_Liaquat,9
-PECHS,Gulistan-e-Johar,7
-Gulshan,Gulistan-e-Johar,3
-Gulistan-e-Johar,Hospital_Aga_Khan,5
-Bahadurabad,Hospital_Aga_Khan,3
-Bahadurabad,PECHS,2
-KDA_Scheme_1,Hospital_Aga_Khan,2
-KDA_Scheme_1,Gulistan-e-Johar,4
-Garden,Hospital_Civil,3
-Garden,Saddar,3
-Jubilee,Hospital_Civil,2
-Jubilee,Saddar,2
-North_Nazimabad,Hospital_Liaquat,4
-North_Nazimabad,Karachi_Central,3
-FB_Area,Hospital_Liaquat,3
-FB_Area,Gulshan,4
+Saddar, Hospital_Civil, 2
+Saddar, Hospital_Omi, 3
+Clifton, Hospital_South, 2
+Clifton, Hospital_Jinnah, 6
+DHA, Hospital_South, 4
+DHA, Hospital_Jinnah, 7
+Gulshan, Hospital_Aga_Khan, 3
+Gulshan, Hospital_Ziauddin, 4
+NorthNazimabad, Hospital_Patel, 3
+NorthNazimabad, Hospital_Ziauddin, 8
+JamshedTown, Hospital_Jinnah, 2
+JamshedTown, Hospital_Tabba, 3
+Landhi, Hospital_Indus, 3
+Malir, Hospital_Indus, 5
+Nazimabad, Hospital_Patel, 2
+Nazimabad, Hospital_Omi, 7
+Korangi, Hospital_Jinnah, 4
+Korangi, Hospital_Indus, 7
+Defence, Hospital_South, 3
+Bahadurabad, Hospital_Tabba, 2
+Bahadurabad, Hospital_Jinnah, 4
+GulistanJohar, Hospital_Aga_Khan, 4
+GulistanJohar, Hospital_Tabba, 5
+PECHS, Hospital_Tabba, 3
+PECHS, Hospital_Jinnah, 3
+SITE, Hospital_Patel, 5
+SITE, Hospital_Omi, 6
+Lyari, Hospital_Civil, 2
+Lyari, Hospital_South, 6
+FederalBArea, Hospital_Ziauddin, 3
+FederalBArea, Hospital_Patel, 4
+DefenceView, Hospital_Jinnah, 2
+DefenceView, Hospital_Tabba, 4
+ManzoorColony, Hospital_Jinnah, 3
+ManzoorColony, Hospital_Tabba, 5
+Surjani, Hospital_Patel, 6
